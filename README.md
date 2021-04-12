@@ -1,8 +1,8 @@
 # MCLib
-[![GitHub version](https://github.com/MultiCoreNetwork/MCLib/blob/master/resources/release.svg)](https://search.maven.org/search?q=mclib)
-[![GitHub download](https://github.com/MultiCoreNetwork/MCLib/blob/master/resources/downloads.svg)](https://search.maven.org/search?q=mclib)
-[![GitHub stars](https://github.com/MultiCoreNetwork/MCLib/blob/master/resources/stars.svg)](https://github.com/MultiCoreNetwork/MCLib)
-[![GitHub issues](https://github.com/MultiCoreNetwork/MCLib/blob/master/resources/issues.svg)](https://github.com/MultiCoreNetwork/MCLib/issues)
+[![GitHub version](https://raw.githubusercontent.com/MultiCoreNetwork/MCLib/main/resources/release.svg)](https://search.maven.org/search?q=mclib)
+[![GitHub download](https://raw.githubusercontent.com/MultiCoreNetwork/MCLib/main/resources/downloads.svg)](https://search.maven.org/search?q=mclib)
+[![GitHub stars](https://raw.githubusercontent.com/MultiCoreNetwork/MCLib/main/resources/stars.svg)](https://github.com/MultiCoreNetwork/MCLib)
+[![GitHub issues](https://raw.githubusercontent.com/MultiCoreNetwork/MCLib/main/resources/issues.svg)](https://github.com/MultiCoreNetwork/MCLib/issues)
 [![Build Status](https://multicoredev.it/buildStatus/icon?job=MCLib)](https://multicoredev.it/job/MCLib/)
 
 ### Common library for Java programming
@@ -53,6 +53,7 @@ You can add the modules or just the one you need using maven:
     <version>...</version>
     <scope>compile</scope>
 </dependency>
+
 <dependency>
     <groupId>it.multicoredev.mclib</groupId>
     <artifactId>MCLib-MODULE</artifactId>
