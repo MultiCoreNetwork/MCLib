@@ -12,7 +12,7 @@ help you work faster without wasting your time with always the same codes.
 If you need sockets (using netty) check this [MCLib Network](https://github.com/MultiCoreNetwork/MCLib-network)
 
 ## Features
-- [x] SQL libraries (Include MySQL & SQLite)
+- [x] SQL libraries (Include MySQL & SQLite [WIP])
     - Database connection
     - Connection pool
     - Automatic reconnection
@@ -37,21 +37,38 @@ If you need sockets (using netty) check this [MCLib Network](https://github.com/
     - Object serialization / deserialization
     - 3D space methods (distance between two points, point in region)
     - Watchdog
-- [x] More content will come later
+- [x] Networking
+    - Custom packet support
+    - Netty connection pipeline
 
 ## Requirements
 - You need at least JDK8.
 
 ## Getting started
-Add the dependency to your project using maven:
+You can add the modules or just the one you need using maven:
 ```xml
 <dependency>
     <groupId>it.multicoredev.mclib</groupId>
-    <artifactId>MCLib</artifactId>
+    <artifactId>MCLib-All</artifactId>
+    <version>...</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>it.multicoredev.mclib</groupId>
+    <artifactId>MCLib-MODULE</artifactId>
     <version>...</version>
     <scope>compile</scope>
 </dependency>
 ```
+
+Valid modules are:
+  - Configuration
+  - Console
+  - Database
+  - Network
+  - Plugins
+  - Utilities
+
 You can also download the latest version of the library (with also sources and javadocs) from [here](https://multicoredev.it/job/MCLib/) and import it as a library.
 
 ## Contributing
