@@ -40,7 +40,7 @@ public class MySqlConnector implements Connector {
     }
 
     @Override
-    public Connection connect() throws SQLException {
+    public Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://" +

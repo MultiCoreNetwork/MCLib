@@ -56,7 +56,7 @@ public class SQLite extends SQLImplementation {
         if (query.trim().isEmpty()) throw new IllegalArgumentException("Query cannot be empty");
         query = query.replace("{table}", table);
 
-        Connection connection = connector.connect();
+        Connection connection = connector.getConnection();
         PreparedStatement statement = connection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         ResultSet result = statement.executeQuery();
 
@@ -81,7 +81,7 @@ public class SQLite extends SQLImplementation {
         PreparedStatement statement = null;
 
         try {
-            connection = connector.connect();
+            connection = connector.getConnection();
             statement = connection.prepareStatement(query);
             statement.executeUpdate();
 

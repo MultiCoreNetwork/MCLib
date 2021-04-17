@@ -1,10 +1,7 @@
-package it.multicoredev.mclib.db.connectors;
-
-import java.sql.Connection;
-import java.sql.SQLException;
+package it.multicoredev.mclib;
 
 /**
- * Copyright © 2019-2020 by Lorenzo Magni
+ * Copyright © 2021 by Lorenzo Magni
  * This file is part of MCLib.
  * MCLib is under "The 3-Clause BSD License", you can find a copy <a href="https://opensource.org/licenses/BSD-3-Clause">here</a>.
  * <p>
@@ -23,7 +20,5 @@ import java.sql.SQLException;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-public interface Connector {
-    Connection getConnection() throws SQLException;
-    void shutdown();
+public class MCLib {
 }

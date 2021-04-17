@@ -44,7 +44,7 @@ public class PoolSettings {
         dataSourceProperties.put("maintainTimeStats", "false");
         dataSourceProperties.put("useLocalSessionState", "true");
         dataSourceProperties.put("useServerPrepStmts", "true");
-        dataSourceProperties.put("prepStmtCacheSize", "250");
+        dataSourceProperties.put("prepStmtCacheSize", "500");
         dataSourceProperties.put("rewriteBatchedStatements", "true");
         dataSourceProperties.put("prepStmtCacheSqlLimit", "2048");
         dataSourceProperties.put("cacheCallableStmts", "true");

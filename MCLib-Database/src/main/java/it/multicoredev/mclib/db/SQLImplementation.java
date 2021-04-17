@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Copyright © 2019-2020 by Lorenzo Magni
@@ -185,9 +186,10 @@ class SQLImplementation {
     /**
      * Restart the connection with the database
      */
-    public void reset() throws SQLException {
+    public void reset(String reason) throws SQLException {
+        Logger.getLogger(getClass().getSimpleName()).warning("Database connection reset! Reason: " + reason);
         connector.shutdown();
-        connector.connect();
+        connector.getConnection();
     }
 
     /**
@@ -201,7 +203,7 @@ class SQLImplementation {
         PreparedStatement statement = null;
 
         try {
-            connection = connector.connect();
+            connection = connector.getConnection();
             statement = connection.prepareStatement("SELECT 1");
             statement.execute();
             return System.currentTimeMillis() - start;
@@ -226,7 +228,7 @@ class SQLImplementation {
         query = query.replace("{table}", table);
 
         try {
-            Connection connection = connector.connect();
+            Connection connection = connector.getConnection();
             PreparedStatement statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet result = statement.executeQuery();
 
@@ -234,7 +236,7 @@ class SQLImplementation {
 
             return new CompositeResult(connection, statement, result, query);
         } catch (SQLException e) {
-            if (pool && restartConnection(e)) reset();
+            if (pool && restartConnection(e)) reset(e.getMessage());
             throw e;
         }
     }
@@ -254,13 +256,13 @@ class SQLImplementation {
         PreparedStatement statement = null;
 
         try {
-            connection = connector.connect();
+            connection = connector.getConnection();
             statement = connection.prepareStatement(query);
             statement.executeUpdate();
 
             if (printQuery) System.out.println(query);
         } catch (SQLException e) {
-            if (pool && restartConnection(e)) reset();
+            if (pool && restartConnection(e)) reset(e.getMessage());
             throw e;
         } finally {
             DBUtils.closeQuietly(statement);

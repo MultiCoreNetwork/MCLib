@@ -34,7 +34,7 @@ public class SQLiteConnector implements Connector {
     }
 
     @Override
-    public Connection connect() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (database == null) throw new NullPointerException("Database file can't be null");
         if (!database.exists() || !database.isFile()) {
             try {

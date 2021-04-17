@@ -5,7 +5,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -30,11 +29,9 @@ import java.util.Map;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class HikariConnector implements Connector {
-    private PoolSettings poolSettings;
-    private HikariDataSource dataSource;
+    private final HikariDataSource dataSource;
 
     public HikariConnector(String host, int port, String database, String user, String password, String driver, PoolSettings poolSettings) {
-        this.poolSettings = poolSettings;
         HikariConfig config = new HikariConfig();
 
         config.setDataSourceClassName(driver);
@@ -66,7 +63,6 @@ public class HikariConnector implements Connector {
     }
 
     public HikariConnector(String host, int port, String database, String user, String password, PoolSettings poolSettings) {
-        this.poolSettings = poolSettings;
         HikariConfig config = new HikariConfig();
 
         MysqlDataSource ds = new MysqlDataSource();
@@ -99,7 +95,7 @@ public class HikariConnector implements Connector {
     }
 
     @Override
-    public Connection connect() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (dataSource == null) {
             throw new SQLException("Unable to get a connection from the pool. (dataSource is null)");
         }
