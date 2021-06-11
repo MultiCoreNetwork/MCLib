@@ -24,21 +24,26 @@ import java.util.concurrent.locks.ReentrantLock;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Watchdog implements Runnable {
-    private WatchdogListener listener;
+    private final WatchdogListener listener;
+    private final long expirationMillis;
+    private final Thread wdThread;
+    private final Lock expirationDateLock;
+
     private long millisUntilExpiration;
-    private Thread wdThread;
-    private Lock expirationDateLock;
-    private double wdExpiration = 1;
     private boolean isPaused;
 
     /**
      * Creates an instance of the Watchdog
-     * @param listener called when the watchdog dies
+     *
+     * @param listener         called when the watchdog dies
+     * @param expirationMillis lifetime in milliseconds of the watchdog
      */
-    public Watchdog(WatchdogListener listener) {
+    public Watchdog(WatchdogListener listener, long expirationMillis) {
         this.listener = listener;
+        this.expirationMillis = expirationMillis;
+        this.millisUntilExpiration = expirationMillis;
+
         expirationDateLock = new ReentrantLock();
-        millisUntilExpiration = (long) wdExpiration * 1000;
         wdThread = new Thread(this);
         wdThread.start();
     }
@@ -49,7 +54,7 @@ public class Watchdog implements Runnable {
      */
     public void feed() {
         expirationDateLock.lock();
-        millisUntilExpiration = (long) wdExpiration * 1000;
+        millisUntilExpiration = expirationMillis;
         expirationDateLock.unlock();
     }
 
@@ -63,29 +68,20 @@ public class Watchdog implements Runnable {
     /**
      * Get the current timer value in seconds.
      *
-     * @return The current expiration time in seconds
+     * @return The current expiration time in milliseconds
      */
-    public double getTimer() {
-        return millisUntilExpiration / 1000.0;
+    public long getTimer() {
+        return millisUntilExpiration;
     }
 
 
     /**
      * Return the expiration time in seconds.
      *
-     * @return The expiration time in seconds
+     * @return The expiration time in milliseconds
      */
-    public double getExpiration() {
-        return wdExpiration;
-    }
-
-    /**
-     * Sets the expiration value in seconds.
-     *
-     * @param expiration The expiration time in seconds
-     */
-    public void setExpiration(double expiration) {
-        wdExpiration = expiration;
+    public long getExpiration() {
+        return expirationMillis;
     }
 
     /**
@@ -123,11 +119,11 @@ public class Watchdog implements Runnable {
      */
     @Override
     public void run() {
-        while(millisUntilExpiration > 0) {
+        while (millisUntilExpiration > 0) {
             try {
                 expirationDateLock.lock();
 
-                if(!isPaused) {
+                if (!isPaused) {
                     millisUntilExpiration -= 5;
                 }
                 expirationDateLock.unlock();
