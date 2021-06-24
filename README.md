@@ -63,7 +63,7 @@ You can add the modules or just the one you need using maven:
 ```
 
 Valid modules are:
-  - Configuration
+  - Configurations
   - Console
   - Database
   - Network
