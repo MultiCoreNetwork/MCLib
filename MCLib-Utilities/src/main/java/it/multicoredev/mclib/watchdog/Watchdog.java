@@ -62,6 +62,7 @@ public class Watchdog implements Runnable {
      * Kill the watchdog interrupting its thread.
      */
     public void kill() {
+        setEnabled(false);
         wdThread.interrupt();
     }
 
@@ -130,7 +131,7 @@ public class Watchdog implements Runnable {
 
                 Thread.sleep(5);
             } catch (InterruptedException e) {
-                break;
+                return;
             }
         }
 

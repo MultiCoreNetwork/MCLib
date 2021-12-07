@@ -1,8 +1,8 @@
 package it.multicoredev.mclib.db.connectors;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.mariadb.jdbc.MariaDbDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -65,13 +65,16 @@ public class HikariConnector implements Connector {
     public HikariConnector(String host, int port, String database, String user, String password, PoolSettings poolSettings) {
         HikariConfig config = new HikariConfig();
 
-        MysqlDataSource ds = new MysqlDataSource();
-        String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?zeroDateTimeBehavior=convertToNull";
-        ds.setURL(url);
-        ds.setUser(user);
-        ds.setPassword(password);
+        try {
+            MariaDbDataSource ds = new MariaDbDataSource();
+            ds.setUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?zeroDateTimeBehavior=convertToNull");
+            ds.setUser(user);
+            ds.setPassword(password);
 
-        config.setDataSource(ds);
+            config.setDataSource(ds);
+        } catch (SQLException e) {
+            throw new IllegalArgumentException(e);
+        }
 
         config.setPoolName(poolSettings.getPoolName());
         config.setMaximumPoolSize(poolSettings.getMaximumPoolSize());

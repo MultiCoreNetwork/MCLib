@@ -42,7 +42,7 @@ public class MySqlConnector implements Connector {
     @Override
     public Connection getConnection() throws SQLException {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("org.mariadb.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://" +
                     host + ":" + port +
                     "/" + database +

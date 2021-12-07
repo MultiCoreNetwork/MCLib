@@ -7,7 +7,7 @@
     <parent>
         <artifactId>MCLib</artifactId>
         <groupId>it.multicoredev.mclib</groupId>
-        <version>1.7.0.2</version>
+        <version>1.7.1.0</version>
     </parent>
 
     <artifactId>MCLib-Configurations</artifactId>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.28</version>
+            <version>1.29</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
