@@ -23,10 +23,11 @@ import java.lang.reflect.Field;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public abstract class JsonConfig {
+
     /**
      * Use this method to initialize all the parameters of the config.
      */
-    protected abstract void init();
+    public abstract void init();
 
     /**
      * This method reinitialize all the null parameters with the default value.
