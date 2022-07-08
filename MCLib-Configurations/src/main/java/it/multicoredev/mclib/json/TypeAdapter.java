@@ -1,9 +1,9 @@
 package it.multicoredev.mclib.json;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 
 /**
- * Copyright © 2021 by Lorenzo Magni
+ * Copyright © 2022 by Lorenzo Magni
  * This file is part of MCLib.
  * MCLib is under "The 3-Clause BSD License", you can find a copy <a href="https://opensource.org/licenses/BSD-3-Clause">here</a>.
  * <p>
@@ -22,33 +22,30 @@ import java.lang.reflect.Field;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-public abstract class JsonConfig {
+public class TypeAdapter {
+    private Type type;
+    private Object adapter;
 
-    /**
-     * Use this method to initialize all the parameters of the config.
-     */
-    public abstract JsonConfig init();
+    public TypeAdapter(Type type, Object adapter) {
+        this.type = type;
+        this.adapter = adapter;
+    }
 
-    /**
-     * This method reinitialize all the null parameters with the default value.
-     *
-     * @return true if there's at least a value reinitialized.
-     */
-    public boolean completeMissing() {
-        boolean completed = false;
-        for (Field field : getClass().getDeclaredFields()) {
-            try {
-                Object obj = field.get(this);
-                if (obj == null) {
-                    completed = true;
-                } else if (JsonConfig.class.isAssignableFrom(field.getType())) {
-                    if (((JsonConfig) obj).completeMissing()) completed = true;
-                }
-            } catch (IllegalAccessException ignored) {
-            }
-        }
+    public Type getType() {
+        return type;
+    }
 
-        if (completed) init();
-        return completed;
+    public TypeAdapter setType(Type type) {
+        this.type = type;
+        return this;
+    }
+
+    public Object getAdapter() {
+        return adapter;
+    }
+
+    public TypeAdapter setAdapter(Object adapter) {
+        this.adapter = adapter;
+        return this;
     }
 }

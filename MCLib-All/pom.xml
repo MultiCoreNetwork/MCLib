@@ -7,7 +7,7 @@
     <parent>
         <artifactId>MCLib</artifactId>
         <groupId>it.multicoredev.mclib</groupId>
-        <version>1.7.2.0</version>
+        <version>1.7.2.1</version>
     </parent>
 
     <artifactId>MCLib-All</artifactId>
@@ -61,37 +61,37 @@
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
             <artifactId>MCLib-Configurations</artifactId>
-            <version>1.7.2.0</version>
+            <version>1.7.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
             <artifactId>MCLib-Console</artifactId>
-            <version>1.7.2.0</version>
+            <version>1.7.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
             <artifactId>MCLib-Database</artifactId>
-            <version>1.7.2.0</version>
+            <version>1.7.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
             <artifactId>MCLib-Network</artifactId>
-            <version>1.7.2.0</version>
+            <version>1.7.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
             <artifactId>MCLib-Plugins</artifactId>
-            <version>1.7.2.0</version>
+            <version>1.7.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
             <artifactId>MCLib-Utilities</artifactId>
-            <version>1.7.2.0</version>
+            <version>1.7.2.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

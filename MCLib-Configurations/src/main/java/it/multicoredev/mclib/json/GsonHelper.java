@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * Copyright © 2022 by Lorenzo Magni
@@ -48,6 +49,30 @@ public class GsonHelper {
     }
 
     /**
+     * Creates a new GsonHelper with the default Gson and custom Type Adapters.
+     *
+     * @param typeAdapters a map of Type Adapters to use
+     */
+    public GsonHelper(Map<Type, Object> typeAdapters) {
+        GsonBuilder builder = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping();
+        typeAdapters.forEach(builder::registerTypeAdapter);
+        this.gson = builder.create();
+    }
+
+    /**
+     * Creates a new GsonHelper with the default Gson and custom Type Adapters.
+     *
+     * @param typeAdapters a list of {@link TypeAdapter}s to use
+     */
+    public GsonHelper(TypeAdapter... typeAdapters) {
+        GsonBuilder builder = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping();
+        for (TypeAdapter typeAdapter : typeAdapters) {
+            builder.registerTypeAdapter(typeAdapter.getType(), typeAdapter.getAdapter());
+        }
+        this.gson = builder.create();
+    }
+
+    /**
      * Saves the given object to the given file.
      *
      * @param object the object to save
@@ -82,7 +107,7 @@ public class GsonHelper {
      * @param type the type of the object
      * @param <T>  the type of the object
      * @return the object
-     * @throws IOException if an I/O error occurs
+     * @throws IOException         if an I/O error occurs
      * @throws JsonSyntaxException if the file is not valid
      */
     public <T> T load(File file, Type type) throws IOException, JsonSyntaxException {
@@ -98,7 +123,7 @@ public class GsonHelper {
      * @param type the type of the object
      * @param <T>  the type of the object
      * @return the object
-     * @throws IOException if an I/O error occurs
+     * @throws IOException         if an I/O error occurs
      * @throws JsonSyntaxException if the file is not valid
      */
     public <T extends JsonConfig> T loadAndCompleteMissing(File file, Type type) throws IOException, JsonSyntaxException {
@@ -115,7 +140,7 @@ public class GsonHelper {
      * @param type the type of the object
      * @param <T>  the type of the object
      * @return the object
-     * @throws IOException if an I/O error occurs
+     * @throws IOException         if an I/O error occurs
      * @throws JsonSyntaxException if the file is not valid
      */
     public <T extends JsonConfig> T autoload(File file, T def, Type type) throws IOException, JsonSyntaxException {

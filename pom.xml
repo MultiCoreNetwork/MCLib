@@ -6,7 +6,7 @@
 
     <groupId>it.multicoredev.mclib</groupId>
     <artifactId>MCLib</artifactId>
-    <version>1.7.2.0</version>
+    <version>1.7.2.1</version>
     <name>MCLib</name>
     <description>Common library for Java programming</description>
     <url>https://github.com/MultiCoreNetwork/MCLib</url>
