@@ -151,4 +151,8 @@ public class GsonHelper {
             return loadAndCompleteMissing(file, type);
         }
     }
+
+    public Gson getGson() {
+        return gson;
+    }
 }
