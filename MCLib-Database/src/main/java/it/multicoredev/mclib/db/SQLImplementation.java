@@ -193,6 +193,16 @@ class SQLImplementation {
     }
 
     /**
+     * Get the connection to the database.
+     *
+     * @return the connection to the database.
+     * @throws SQLException if the connection to the database fails.
+     */
+    public Connection getConnection() throws SQLException {
+        return connector.getConnection();
+    }
+
+    /**
      * Return the ping with the database.
      *
      * @return The ping in milliseconds with the database

@@ -1,5 +1,5 @@
 # MCLib
-[![GitHub version](https://img.shields.io/badge/release-1.7.2.2-blue)](https://search.maven.org/search?q=mclib)
+[![GitHub version](https://img.shields.io/badge/release-1.7.2.3-blue)](https://search.maven.org/search?q=mclib)
 [![GitHub stars](https://img.shields.io/github/stars/MultiCoreNetwork/MCLib)](https://github.com/MultiCoreNetwork/MCLib)
 [![GitHub issues](https://img.shields.io/github/issues/MultiCoreNetwork/MCLib)](https://github.com/MultiCoreNetwork/MCLib/issues)
 [![Build Status](https://multicoredev.it/buildStatus/icon?job=MCLib)](https://multicoredev.it/job/MCLib/)
