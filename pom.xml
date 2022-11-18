@@ -6,7 +6,7 @@
 
     <groupId>it.multicoredev.mclib</groupId>
     <artifactId>MCLib</artifactId>
-    <version>1.7.2.3</version>
+    <version>1.7.2.4</version>
     <name>MCLib</name>
     <description>Common library for Java programming</description>
     <url>https://github.com/MultiCoreNetwork/MCLib</url>
@@ -27,7 +27,6 @@
         <module>MCLib-Utilities</module>
         <module>MCLib-Plugins</module>
         <module>MCLib-Network</module>
-        <module>MCLib-All</module>
     </modules>
 
     <organization>
@@ -87,7 +86,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>

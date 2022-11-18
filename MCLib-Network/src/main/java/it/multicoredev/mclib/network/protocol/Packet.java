@@ -1,6 +1,6 @@
 package it.multicoredev.mclib.network.protocol;
 
-import it.multicoredev.mclib.network.PacketBuffer;
+import it.multicoredev.mclib.network.PacketByteBuf;
 import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
@@ -26,7 +26,10 @@ import it.multicoredev.mclib.network.exceptions.ProcessException;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public interface Packet<T extends PacketListener> {
-    void encode(PacketBuffer buf) throws EncoderException;
-    void decode(PacketBuffer buf) throws DecoderException;
+
+    void encode(PacketByteBuf buf) throws EncoderException;
+
+    void decode(PacketByteBuf buf) throws DecoderException;
+
     void processPacket(T handler) throws ProcessException;
 }

@@ -1,5 +1,7 @@
 package it.multicoredev.mclib.network;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
@@ -8,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.GatheringByteChannel;
@@ -35,10 +38,11 @@ import java.nio.charset.StandardCharsets;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class PacketBuffer {
+public class PacketByteBuf {
+    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private ByteBuf buf;
 
-    public PacketBuffer(@NotNull ByteBuf buf) {
+    public PacketByteBuf(@NotNull ByteBuf buf) {
         this.buf = buf;
     }
 
@@ -48,25 +52,61 @@ public class PacketBuffer {
 
     public String readString(Charset charset) {
         int len = readInt();
-        return readBytes(len).toString();
+        ByteBuf buf = buf().readBytes(len);
+        return buf.toString(charset);
     }
 
     public String readString() {
         return readString(StandardCharsets.UTF_8);
     }
 
-    public PacketBuffer writeString(String str) {
+    public PacketByteBuf writeString(String str) {
         byte[] bytes = str.getBytes();
         writeInt(bytes.length);
         writeBytes(bytes);
         return this;
     }
 
+    /**
+     * Write an Object serialized as json.
+     * The object must be serializable with Gson.
+     *
+     * @param obj The object to send.
+     * @return The PacketByteBuf.
+     * @throws IllegalArgumentException If the object is not serializable.
+     */
+    public PacketByteBuf writeObject(Object obj) throws IllegalArgumentException {
+        try {
+            String json = gson.toJson(obj);
+            writeString(json);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Object " + obj.getClass().getCanonicalName() + " is not serializable", e);
+        }
+
+        return this;
+    }
+
+    /**
+     * Read an object serialized as json.
+     *
+     * @param type The type of the object.
+     * @param <T>  The type of the object.
+     * @return The object deserialized.
+     */
+    public <T> T readObject(Type type) throws IllegalArgumentException {
+        String json = readString();
+        try {
+            return gson.fromJson(json, type);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Object " + type.getTypeName() + " is not deserializable", e);
+        }
+    }
+
     public int capacity() {
         return buf.capacity();
     }
 
-    public PacketBuffer capacity(int newCapacity) {
+    public PacketByteBuf capacity(int newCapacity) {
         buf.capacity(newCapacity);
         return this;
     }
@@ -79,7 +119,7 @@ public class PacketBuffer {
         return buf.alloc();
     }
 
-    public PacketBuffer unwrap() {
+    public PacketByteBuf unwrap() {
         buf.unwrap();
         return this;
     }
@@ -92,7 +132,7 @@ public class PacketBuffer {
         return buf.isReadOnly();
     }
 
-    public PacketBuffer asReadOnly() {
+    public PacketByteBuf asReadOnly() {
         buf.asReadOnly();
         return this;
     }
@@ -101,7 +141,7 @@ public class PacketBuffer {
         return buf.readerIndex();
     }
 
-    public PacketBuffer readerIndex(int readerIndex) {
+    public PacketByteBuf readerIndex(int readerIndex) {
         buf.readerIndex(readerIndex);
         return this;
     }
@@ -110,12 +150,12 @@ public class PacketBuffer {
         return buf.writerIndex();
     }
 
-    public PacketBuffer writerIndex(int writerIndex) {
+    public PacketByteBuf writerIndex(int writerIndex) {
         buf.writerIndex(writerIndex);
         return this;
     }
 
-    public PacketBuffer setIndex(int readerIndex, int writerIndex) {
+    public PacketByteBuf setIndex(int readerIndex, int writerIndex) {
         buf.setInt(readerIndex, writerIndex);
         return this;
     }
@@ -152,42 +192,42 @@ public class PacketBuffer {
         return buf.isWritable(size);
     }
 
-    public PacketBuffer clear() {
+    public PacketByteBuf clear() {
         buf.clear();
         return this;
     }
 
-    public PacketBuffer markReaderIndex() {
+    public PacketByteBuf markReaderIndex() {
         buf.markReaderIndex();
         return this;
     }
 
-    public PacketBuffer resetReaderIndex() {
+    public PacketByteBuf resetReaderIndex() {
         buf.resetReaderIndex();
         return this;
     }
 
-    public PacketBuffer markWriterIndex() {
+    public PacketByteBuf markWriterIndex() {
         buf.markWriterIndex();
         return this;
     }
 
-    public PacketBuffer resetWriterIndex() {
+    public PacketByteBuf resetWriterIndex() {
         buf.resetWriterIndex();
         return this;
     }
 
-    public PacketBuffer discardReadBytes() {
+    public PacketByteBuf discardReadBytes() {
         buf.discardReadBytes();
         return this;
     }
 
-    public PacketBuffer discardSomeReadBytes() {
+    public PacketByteBuf discardSomeReadBytes() {
         buf.discardSomeReadBytes();
         return this;
     }
 
-    public PacketBuffer ensureWritable(int minWriteableBytes) {
+    public PacketByteBuf ensureWritable(int minWriteableBytes) {
         buf.ensureWritable(minWriteableBytes);
         return this;
     }
@@ -284,37 +324,37 @@ public class PacketBuffer {
         return Double.longBitsToDouble(buf.getLongLE(index));
     }
 
-    public PacketBuffer getBytes(int index, ByteBuf dst) {
+    public PacketByteBuf getBytes(int index, ByteBuf dst) {
         buf.getBytes(index, dst);
         return this;
     }
 
-    public PacketBuffer getBytes(int index, ByteBuf dst, int length) {
+    public PacketByteBuf getBytes(int index, ByteBuf dst, int length) {
         buf.getBytes(index, dst, length);
         return this;
     }
 
-    public PacketBuffer getBytes(int index, ByteBuf dst, int dstIndex, int length) {
+    public PacketByteBuf getBytes(int index, ByteBuf dst, int dstIndex, int length) {
         buf.getBytes(index, dst, dstIndex, length);
         return this;
     }
 
-    public PacketBuffer getBytes(int index, byte[] dst) {
+    public PacketByteBuf getBytes(int index, byte[] dst) {
         buf.getBytes(index, dst);
         return this;
     }
 
-    public PacketBuffer getBytes(int index, byte[] dst, int dstIndex, int legth) {
+    public PacketByteBuf getBytes(int index, byte[] dst, int dstIndex, int legth) {
         buf.getBytes(index, dst, dstIndex, legth);
         return this;
     }
 
-    public PacketBuffer getBytes(int index, ByteBuffer dst) {
+    public PacketByteBuf getBytes(int index, ByteBuffer dst) {
         buf.getBytes(index, dst);
         return this;
     }
 
-    public PacketBuffer getBytes(int index, OutputStream out, int length) throws IOException {
+    public PacketByteBuf getBytes(int index, OutputStream out, int length) throws IOException {
         buf.getBytes(index, out, length);
         return this;
     }
@@ -331,107 +371,107 @@ public class PacketBuffer {
         return buf.getCharSequence(index, length, charset);
     }
 
-    public PacketBuffer setBoolean(int index, boolean value) {
+    public PacketByteBuf setBoolean(int index, boolean value) {
         buf.setBoolean(index, value);
         return this;
     }
 
-    public PacketBuffer setByte(int index, int value) {
+    public PacketByteBuf setByte(int index, int value) {
         buf.setByte(index, value);
         return this;
     }
 
-    public PacketBuffer setShort(int index, int value) {
+    public PacketByteBuf setShort(int index, int value) {
         buf.setShort(index, value);
         return this;
     }
 
-    public PacketBuffer setShortLE(int index, int value) {
+    public PacketByteBuf setShortLE(int index, int value) {
         buf.setShortLE(index, value);
         return this;
     }
 
-    public PacketBuffer setMedium(int index, int value) {
+    public PacketByteBuf setMedium(int index, int value) {
         buf.setMedium(index, value);
         return this;
     }
 
-    public PacketBuffer setMediumLE(int index, int value) {
+    public PacketByteBuf setMediumLE(int index, int value) {
         buf.setMediumLE(index, value);
         return this;
     }
 
-    public PacketBuffer setInt(int index, int value) {
+    public PacketByteBuf setInt(int index, int value) {
         buf.setInt(index, value);
         return this;
     }
 
-    public PacketBuffer setIntLE(int index, int value) {
+    public PacketByteBuf setIntLE(int index, int value) {
         buf.setIntLE(index, value);
         return this;
     }
 
-    public PacketBuffer setLong(int index, long value) {
+    public PacketByteBuf setLong(int index, long value) {
         buf.setLong(index, value);
         return this;
     }
 
-    public PacketBuffer setLongLE(int index, long value) {
+    public PacketByteBuf setLongLE(int index, long value) {
         buf.setLongLE(index, value);
         return this;
     }
 
-    public PacketBuffer setChar(int index, int value) {
+    public PacketByteBuf setChar(int index, int value) {
         buf.setChar(index, value);
         return this;
     }
 
-    public PacketBuffer setFloat(int index, float value) {
+    public PacketByteBuf setFloat(int index, float value) {
         buf.setFloat(index, value);
         return this;
     }
 
-    public PacketBuffer setFloatLE(int index, float value) {
+    public PacketByteBuf setFloatLE(int index, float value) {
         buf.setIntLE(index, Float.floatToRawIntBits(value));
         return this;
     }
 
-    public PacketBuffer setDouble(int index, double value) {
+    public PacketByteBuf setDouble(int index, double value) {
         buf.setDouble(index, value);
         return this;
     }
 
-    public PacketBuffer setDoubleLE(int index, double value) {
+    public PacketByteBuf setDoubleLE(int index, double value) {
         buf.setLongLE(index, Double.doubleToRawLongBits(value));
         return this;
     }
 
-    public PacketBuffer setBytes(int index, ByteBuf src) {
+    public PacketByteBuf setBytes(int index, ByteBuf src) {
         buf.setBytes(index, src);
         return this;
     }
 
-    public PacketBuffer setBytes(int index, ByteBuf src, int length) {
+    public PacketByteBuf setBytes(int index, ByteBuf src, int length) {
         buf.setBytes(index, src, length);
         return this;
     }
 
-    public PacketBuffer setBytes(int index, ByteBuf src, int srcIndex, int length) {
+    public PacketByteBuf setBytes(int index, ByteBuf src, int srcIndex, int length) {
         buf.setBytes(index, src, srcIndex, length);
         return this;
     }
 
-    public PacketBuffer setBytes(int index, byte[] src) {
+    public PacketByteBuf setBytes(int index, byte[] src) {
         buf.setBytes(index, src);
         return this;
     }
 
-    public PacketBuffer setBytes(int index, byte[] src, int srcIndex, int length) {
+    public PacketByteBuf setBytes(int index, byte[] src, int srcIndex, int length) {
         buf.setBytes(index, src, srcIndex, length);
         return this;
     }
 
-    public PacketBuffer setBytes(int index, ByteBuffer stc) {
+    public PacketByteBuf setBytes(int index, ByteBuffer stc) {
         buf.setBytes(index, stc);
         return this;
     }
@@ -448,7 +488,7 @@ public class PacketBuffer {
         return buf.setBytes(index, in, position, length);
     }
 
-    public PacketBuffer setZero(int index, int length) {
+    public PacketByteBuf setZero(int index, int length) {
         buf.setZero(index, length);
         return this;
     }
@@ -545,52 +585,52 @@ public class PacketBuffer {
         return Double.longBitsToDouble(buf.readLongLE());
     }
 
-    public PacketBuffer readBytes(int length) {
+    public PacketByteBuf readBytes(int length) {
         buf.readBytes(length);
         return this;
     }
 
-    public PacketBuffer readSlice(int length) {
+    public PacketByteBuf readSlice(int length) {
         buf.readSlice(length);
         return this;
     }
 
-    public PacketBuffer readRetainedSlice(int length) {
+    public PacketByteBuf readRetainedSlice(int length) {
         buf.readRetainedSlice(length);
         return this;
     }
 
-    public PacketBuffer readBytes(ByteBuf dst) {
+    public PacketByteBuf readBytes(ByteBuf dst) {
         buf.readBytes(dst);
         return this;
     }
 
-    public PacketBuffer readBytes(ByteBuf dst, int length) {
+    public PacketByteBuf readBytes(ByteBuf dst, int length) {
         buf.readBytes(dst, length);
         return this;
     }
 
-    public PacketBuffer readBytes(ByteBuf dst, int dstIndex, int length) {
+    public PacketByteBuf readBytes(ByteBuf dst, int dstIndex, int length) {
         buf.readBytes(dst, dstIndex, length);
         return this;
     }
 
-    public PacketBuffer readBytes(byte[] dst) {
+    public PacketByteBuf readBytes(byte[] dst) {
         buf.readBytes(dst);
         return this;
     }
 
-    public PacketBuffer readBytes(byte[] dst, int dstIndex, int length) {
+    public PacketByteBuf readBytes(byte[] dst, int dstIndex, int length) {
         buf.readBytes(dst, dstIndex, length);
         return this;
     }
 
-    public PacketBuffer readBytes(ByteBuffer dst) {
+    public PacketByteBuf readBytes(ByteBuffer dst) {
         buf.readBytes(dst);
         return this;
     }
 
-    public PacketBuffer readBytes(OutputStream out, int length) throws IOException {
+    public PacketByteBuf readBytes(OutputStream out, int length) throws IOException {
         buf.readBytes(out, length);
         return this;
     }
@@ -607,112 +647,112 @@ public class PacketBuffer {
         return buf.readBytes(out, position, length);
     }
 
-    public PacketBuffer skipBytes(int length) {
+    public PacketByteBuf skipBytes(int length) {
         buf.skipBytes(length);
         return this;
     }
 
-    public PacketBuffer writeBoolean(boolean value) {
+    public PacketByteBuf writeBoolean(boolean value) {
         buf.writeBoolean(value);
         return this;
     }
 
-    public PacketBuffer writeByte(int value) {
+    public PacketByteBuf writeByte(int value) {
         buf.writeByte(value);
         return this;
     }
 
-    public PacketBuffer writeShort(int value) {
+    public PacketByteBuf writeShort(int value) {
         buf.writeShort(value);
         return this;
     }
 
-    public PacketBuffer writeShortLE(int value) {
+    public PacketByteBuf writeShortLE(int value) {
         buf.writeShortLE(value);
         return this;
     }
 
-    public PacketBuffer writeMedium(int value) {
+    public PacketByteBuf writeMedium(int value) {
         buf.writeMedium(value);
         return this;
     }
 
-    public PacketBuffer writeMediumLE(int value) {
+    public PacketByteBuf writeMediumLE(int value) {
         buf.writeMediumLE(value);
         return this;
     }
 
-    public PacketBuffer writeInt(int value) {
+    public PacketByteBuf writeInt(int value) {
         buf.writeInt(value);
         return this;
     }
 
-    public PacketBuffer writeIntLE(int value) {
+    public PacketByteBuf writeIntLE(int value) {
         buf.writeIntLE(value);
         return this;
     }
 
-    public PacketBuffer writeLong(long value) {
+    public PacketByteBuf writeLong(long value) {
         buf.writeLong(value);
         return this;
     }
 
-    public PacketBuffer writeLongLE(long value) {
+    public PacketByteBuf writeLongLE(long value) {
         buf.writeLongLE(value);
         return this;
     }
 
-    public PacketBuffer writeChar(int value) {
+    public PacketByteBuf writeChar(int value) {
         buf.writeChar(value);
         return this;
     }
 
-    public PacketBuffer writeFloat(float value) {
+    public PacketByteBuf writeFloat(float value) {
         buf.writeFloat(value);
         return this;
     }
 
-    public PacketBuffer writeFloatLE(float value) {
+    public PacketByteBuf writeFloatLE(float value) {
         buf.writeIntLE(Float.floatToRawIntBits(value));
         return this;
     }
 
-    public PacketBuffer writeDouble(double value) {
+    public PacketByteBuf writeDouble(double value) {
         buf.writeDouble(value);
         return this;
     }
 
-    public PacketBuffer writeDoubleLE(double value) {
+    public PacketByteBuf writeDoubleLE(double value) {
         buf.writeLongLE(Double.doubleToRawLongBits(value));
         return this;
     }
 
-    public PacketBuffer writeBytes(ByteBuf src) {
+    public PacketByteBuf writeBytes(ByteBuf src) {
         buf.writeBytes(src);
         return this;
     }
 
-    public PacketBuffer writeBytes(ByteBuf src, int length) {
+    public PacketByteBuf writeBytes(ByteBuf src, int length) {
         buf.writeBytes(src, length);
         return this;
     }
 
-    public PacketBuffer writeBytes(ByteBuf src, int srcIndex, int length) {
+    public PacketByteBuf writeBytes(ByteBuf src, int srcIndex, int length) {
         buf.writeBytes(src, srcIndex, length);
         return this;
     }
 
-    public PacketBuffer writeBytes(byte[] src) {
+    public PacketByteBuf writeBytes(byte[] src) {
         buf.writeBytes(src);
         return this;
     }
 
-    public PacketBuffer writeBytes(byte[] src, int srcIndex, int length) {
+    public PacketByteBuf writeBytes(byte[] src, int srcIndex, int length) {
         buf.writeBytes(src, srcIndex, length);
         return this;
     }
 
-    public PacketBuffer writeBytes(ByteBuffer src) {
+    public PacketByteBuf writeBytes(ByteBuffer src) {
         buf.writeBytes(src);
         return this;
     }
@@ -729,7 +769,7 @@ public class PacketBuffer {
         return buf.writeBytes(in, position, length);
     }
 
-    public PacketBuffer writeZero(int length) {
+    public PacketByteBuf writeZero(int length) {
         buf.writeZero(length);
         return this;
     }
@@ -770,40 +810,40 @@ public class PacketBuffer {
         return buf.forEachByteDesc(index, length, processor);
     }
 
-    public PacketBuffer copy() {
-        return new PacketBuffer(buf.copy());
+    public PacketByteBuf copy() {
+        return new PacketByteBuf(buf.copy());
     }
 
-    public PacketBuffer copy(int index, int length) {
-        return new PacketBuffer(buf.copy());
+    public PacketByteBuf copy(int index, int length) {
+        return new PacketByteBuf(buf.copy());
     }
 
-    public PacketBuffer slice() {
+    public PacketByteBuf slice() {
         buf.slice();
         return this;
     }
 
-    public PacketBuffer retainedSlice() {
+    public PacketByteBuf retainedSlice() {
         buf.retainedSlice();
         return this;
     }
 
-    public PacketBuffer slice(int index, int length) {
+    public PacketByteBuf slice(int index, int length) {
         buf.slice(index, length);
         return this;
     }
 
-    public PacketBuffer retainedSlice(int index, int length) {
+    public PacketByteBuf retainedSlice(int index, int length) {
         buf.retainedSlice(index, length);
         return this;
     }
 
-    public PacketBuffer duplicate() {
+    public PacketByteBuf duplicate() {
         buf.duplicate();
         return this;
     }
 
-    public PacketBuffer retainedDuplicate() {
+    public PacketByteBuf retainedDuplicate() {
         buf.retainedDuplicate();
         return this;
     }
@@ -812,17 +852,17 @@ public class PacketBuffer {
         return buf.nioBufferCount();
     }
 
-    public PacketBuffer nioBuffer() {
+    public PacketByteBuf nioBuffer() {
         buf.nioBuffer();
         return this;
     }
 
-    public PacketBuffer nioBuffer(int index, int length) {
+    public PacketByteBuf nioBuffer(int index, int length) {
         buf.nioBuffer(index, length);
         return this;
     }
 
-    public PacketBuffer internalNioBuffer(int index, int length) {
+    public PacketByteBuf internalNioBuffer(int index, int length) {
         buf.internalNioBuffer(index, length);
         return this;
     }
@@ -883,22 +923,22 @@ public class PacketBuffer {
         return buf.toString();
     }
 
-    public PacketBuffer retain(int increment) {
+    public PacketByteBuf retain(int increment) {
         buf.retain(increment);
         return this;
     }
 
-    public PacketBuffer retain() {
+    public PacketByteBuf retain() {
         buf.retain();
         return this;
     }
 
-    public PacketBuffer touch() {
+    public PacketByteBuf touch() {
         buf.touch();
         return this;
     }
 
-    public PacketBuffer touch(Object var1) {
+    public PacketByteBuf touch(Object var1) {
         buf.touch(var1);
         return this;
     }

@@ -26,7 +26,7 @@ import java.util.Map;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PacketRegistry {
-    private HashMap<Integer, Class<Packet<?>>> packets = new HashMap<>();
+    private final HashMap<Integer, Class<? extends Packet<?>>> packets = new HashMap<>();
     private static PacketRegistry instance;
 
     private PacketRegistry() {
@@ -35,12 +35,10 @@ public class PacketRegistry {
     /**
      * Gets an instance of the packet registry.
      *
-     * @return  Return the instance of the PacketRegistry
+     * @return Return the instance of the PacketRegistry
      */
     public static PacketRegistry getInstance() {
-        if (instance == null) {
-            instance = new PacketRegistry();
-        }
+        if (instance == null) instance = new PacketRegistry();
         return instance;
     }
 
@@ -49,9 +47,9 @@ public class PacketRegistry {
      *
      * @param packet {@link Packet} class to register
      */
-    public void registerPacket(Class<Packet<?>> packet) {
+    public void registerPacket(Class<? extends Packet<?>> packet) {
         if (packets.containsValue(packet)) return;
-        packets.put(getFirstId(), packet);
+        packets.put(packets.size(), packet);
     }
 
     /**
@@ -72,7 +70,7 @@ public class PacketRegistry {
      * @return The class of the {@link Packet} or null if the id does not exists
      */
     @Nullable
-    public Class<Packet<?>> getPacketClass(int id) {
+    public Class<? extends Packet<?>> getPacketClass(int id) {
         return packets.get(id);
     }
 
@@ -80,21 +78,14 @@ public class PacketRegistry {
      * Get the id of a {@link Packet}.
      *
      * @param packet The packet
-     * @return  The id of the {@link Packet} or null if the packet is not registered
+     * @return The id of the {@link Packet} or null if the packet is not registered
      */
     @Nullable
     public Integer getPacketId(Packet<?> packet) {
-        for (Map.Entry<Integer, Class<Packet<?>>> entry : packets.entrySet()) {
+        for (Map.Entry<Integer, Class<? extends Packet<?>>> entry : packets.entrySet()) {
             if (entry.getValue().equals(packet.getClass())) return entry.getKey();
         }
 
         return null;
-    }
-
-    private int getFirstId() {
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            if (!packets.containsKey(i)) return i;
-        }
-        return -1;
     }
 }

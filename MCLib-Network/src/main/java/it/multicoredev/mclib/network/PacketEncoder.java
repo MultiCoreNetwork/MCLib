@@ -28,12 +28,13 @@ import it.multicoredev.mclib.network.protocol.PacketRegistry;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, Packet packet, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf byteBuf) throws Exception {
         Integer id = PacketRegistry.getInstance().getPacketId(packet);
         if (id == null) throw new EncoderException("Unregistered packet.");
 
-        PacketBuffer buf = new PacketBuffer(byteBuf);
+        PacketByteBuf buf = new PacketByteBuf(byteBuf);
         buf.writeInt(id);
         packet.encode(buf);
     }

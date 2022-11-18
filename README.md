@@ -1,8 +1,7 @@
 # MCLib
-[![GitHub version](https://img.shields.io/badge/release-1.7.2.3-blue)](https://search.maven.org/search?q=mclib)
+[![GitHub version](https://img.shields.io/badge/release-1.7.2.4-blue)](https://search.maven.org/search?q=mclib)
 [![GitHub stars](https://img.shields.io/github/stars/MultiCoreNetwork/MCLib)](https://github.com/MultiCoreNetwork/MCLib)
 [![GitHub issues](https://img.shields.io/github/issues/MultiCoreNetwork/MCLib)](https://github.com/MultiCoreNetwork/MCLib/issues)
-[![Build Status](https://multicoredev.it/buildStatus/icon?job=MCLib)](https://multicoredev.it/job/MCLib/)
 
 ### Common library for Java programming
 This library contains a bunch of frequently used code snippets and classes that will
@@ -39,15 +38,7 @@ help you work faster without wasting your time with always the same codes.
 - You need at least JDK8.
 
 ## Getting started
-You can add the modules or just the one you need using maven:
-```xml
-<dependency>
-    <groupId>it.multicoredev.mclib</groupId>
-    <artifactId>MCLib-All</artifactId>
-    <version>...</version>
-    <scope>compile</scope>
-</dependency>
-```
+You can add the modules using maven:
 ```xml
 <dependency>
     <groupId>it.multicoredev.mclib</groupId>

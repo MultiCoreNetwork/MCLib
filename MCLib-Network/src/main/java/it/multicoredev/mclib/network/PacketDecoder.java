@@ -2,7 +2,7 @@ package it.multicoredev.mclib.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ReplayingDecoder;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.PacketException;
@@ -31,21 +31,22 @@ import java.util.List;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class PacketDecoder extends ReplayingDecoder<Packet<?>> {
+public class PacketDecoder extends ByteToMessageDecoder {
+
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> objects) throws Exception {
         if (byteBuf.readableBytes() == 0) throw new DecoderException("Packet not readable");
 
-        PacketBuffer buf = new PacketBuffer(byteBuf);
+        PacketByteBuf buf = new PacketByteBuf(byteBuf);
         int id = buf.readInt();
-        Class<Packet<?>> packetClass = PacketRegistry.getInstance().getPacketClass(id);
+        Class<? extends Packet<?>> packetClass = PacketRegistry.getInstance().getPacketClass(id);
 
         if (packetClass == null) throw new EncoderException("Packet not registered");
 
         try {
-            Packet<?> packet = packetClass.newInstance();
+            Packet<?> packet = packetClass.getConstructor().newInstance();
             packet.decode(buf);
-            list.add(packet);
+            objects.add(packet);
         } catch (IllegalAccessException e) {
             throw new PacketException("Packets must have an empty constructor");
         }
