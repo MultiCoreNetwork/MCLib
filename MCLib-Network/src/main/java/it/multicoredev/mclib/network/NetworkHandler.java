@@ -2,8 +2,10 @@ package it.multicoredev.mclib.network;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import it.multicoredev.mclib.network.exceptions.PacketException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.mclib.network.protocol.PacketListener;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Copyright © 2020 by Lorenzo Magni
@@ -26,10 +28,11 @@ import it.multicoredev.mclib.network.protocol.PacketListener;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public abstract class NetworkHandler extends ChannelInboundHandlerAdapter {
-    private final PacketListener listener;
+    private PacketListener listener;
     protected ChannelHandlerContext ctx;
 
-    public NetworkHandler(PacketListener listener) {
+    public void setPacketListener(@NotNull PacketListener listener) {
+        if (this.listener != null) throw new IllegalStateException("PacketListener already set");
         this.listener = listener;
     }
 
@@ -51,7 +54,21 @@ public abstract class NetworkHandler extends ChannelInboundHandlerAdapter {
     @Override
     public abstract void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception;
 
-    public void sendPacket(Packet<?> packet) {
-        ctx.writeAndFlush(packet);
+    public void sendPacket(@NotNull Packet<?> packet) throws PacketException {
+        try {
+            ctx.writeAndFlush(packet);
+        } catch (Exception e) {
+            throw new PacketException("Error while sending packet", e);
+        }
+    }
+
+    public boolean isConnected() {
+        return ctx != null && ctx.channel().isActive();
+    }
+
+    public void disconnect() {
+        if (ctx != null) {
+            ctx.disconnect();
+        }
     }
 }

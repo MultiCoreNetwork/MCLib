@@ -38,11 +38,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ServerSocket {
     private final int port;
-    private final PacketListener packetListener;
+    private final Class<? extends PacketListener> packetListener;
     private final Class<? extends NetworkHandler> networkHandlerClass;
     private LogLevel logLevel = LogLevel.INFO;
 
-    public ServerSocket(int port, PacketListener packetListener, Class<? extends NetworkHandler> networkHandlerClass) {
+    private EventLoopGroup parent;
+    private EventLoopGroup child;
+
+    public ServerSocket(int port, Class<? extends PacketListener> packetListener, Class<? extends NetworkHandler> networkHandlerClass) {
         this.port = port;
         this.packetListener = packetListener;
         this.networkHandlerClass = networkHandlerClass;
@@ -57,8 +60,8 @@ public class ServerSocket {
     }
 
     public void startServer() throws InterruptedException {
-        EventLoopGroup parent = new NioEventLoopGroup();
-        EventLoopGroup child = new NioEventLoopGroup();
+        parent = new NioEventLoopGroup();
+        child = new NioEventLoopGroup();
 
         ChannelInitializer<SocketChannel> channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -85,10 +88,20 @@ public class ServerSocket {
         }
     }
 
+    public void stopServer() {
+        if (parent != null) parent.shutdownGracefully();
+        if (child != null) child.shutdownGracefully();
+    }
+
     @Nullable
     private NetworkHandler createNetworkHandler() {
         try {
-            return networkHandlerClass.getDeclaredConstructor(PacketListener.class).newInstance(packetListener);
+            NetworkHandler handler = networkHandlerClass.getDeclaredConstructor().newInstance();
+            PacketListener listener = packetListener.getDeclaredConstructor().newInstance();
+
+            listener.setNetworkHandler(handler);
+            handler.setPacketListener(listener);
+            return handler;
         } catch (Exception ignored) {
             return null;
         }

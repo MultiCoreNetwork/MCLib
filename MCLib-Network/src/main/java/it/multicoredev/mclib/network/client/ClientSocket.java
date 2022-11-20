@@ -10,6 +10,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.mclib.network.PacketDecoder;
 import it.multicoredev.mclib.network.PacketEncoder;
+import it.multicoredev.mclib.network.exceptions.PacketException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.mclib.network.protocol.PacketListener;
 
@@ -37,9 +38,10 @@ public class ClientSocket {
     private final ServerAddress serverAddress;
     private final NetworkHandler networkHandler;
 
-    public ClientSocket(ServerAddress serverAddress, NetworkHandler networkHandler) {
+    public ClientSocket(ServerAddress serverAddress, NetworkHandler networkHandler, PacketListener packetListener) {
         this.serverAddress = serverAddress;
         this.networkHandler = networkHandler;
+        this.networkHandler.setPacketListener(packetListener);
     }
 
     public void connect() throws InterruptedException {
@@ -65,8 +67,16 @@ public class ClientSocket {
         }
     }
 
-    public void sendPacket(Packet<?> packet) {
+    public void sendPacket(Packet<?> packet) throws PacketException {
         networkHandler.sendPacket(packet);
+    }
+
+    public boolean isConnected() {
+        return networkHandler.isConnected();
+    }
+
+    public void disconnect() {
+        networkHandler.disconnect();
     }
 
     public NetworkHandler getNetworkHandler() {

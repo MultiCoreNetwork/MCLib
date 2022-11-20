@@ -1,5 +1,7 @@
 package it.multicoredev.mclib.network.protocol;
 
+import it.multicoredev.mclib.network.NetworkHandler;
+
 /**
  * Copyright © 2020 by Lorenzo Magni
  * This file is part of MCLib-network.
@@ -21,4 +23,6 @@ package it.multicoredev.mclib.network.protocol;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public interface PacketListener {
+
+    void setNetworkHandler(NetworkHandler networkHandler);
 }

@@ -7,7 +7,7 @@
     <parent>
         <artifactId>MCLib</artifactId>
         <groupId>it.multicoredev.mclib</groupId>
-        <version>1.7.2.4</version>
+        <version>1.7.2.5</version>
     </parent>
 
     <artifactId>MCLib-Plugins</artifactId>

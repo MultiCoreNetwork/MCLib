@@ -3,7 +3,7 @@ package it.multicoredev.mclib.seed.plugin;
 import java.io.File;
 
 /**
- * Copyright © 2020 by Lorenzo Magni
+ * Copyright © 2020 - 2022 by Lorenzo Magni
  * This file is part of MCLib.
  * MCLib is under "The 3-Clause BSD License", you can find a copy <a href="https://opensource.org/licenses/BSD-3-Clause">here</a>.
  * <p>
