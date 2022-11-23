@@ -11,6 +11,7 @@ import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.mclib.network.PacketDecoder;
 import it.multicoredev.mclib.network.PacketEncoder;
 import it.multicoredev.mclib.network.exceptions.PacketException;
+import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.mclib.network.protocol.PacketListener;
 
@@ -67,7 +68,7 @@ public class ClientSocket {
         }
     }
 
-    public void sendPacket(Packet<?> packet) throws PacketException {
+    public void sendPacket(Packet<?> packet) throws PacketSendException {
         networkHandler.sendPacket(packet);
     }
 

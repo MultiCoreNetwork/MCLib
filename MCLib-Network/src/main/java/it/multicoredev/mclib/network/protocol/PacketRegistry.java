@@ -88,4 +88,19 @@ public class PacketRegistry {
 
         return null;
     }
+
+    /**
+     * Get the id of a {@link Packet}.
+     *
+     * @param packetClass The packet class
+     * @return The id of the {@link Packet} or null if the packet is not registered
+     */
+    @Nullable
+    public Integer getPacketId(Class<? extends Packet> packetClass) {
+        for (Map.Entry<Integer, Class<? extends Packet<?>>> entry : packets.entrySet()) {
+            if (entry.getValue().equals(packetClass)) return entry.getKey();
+        }
+
+        return null;
+    }
 }

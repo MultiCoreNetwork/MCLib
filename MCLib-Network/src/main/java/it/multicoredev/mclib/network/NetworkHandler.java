@@ -3,6 +3,7 @@ package it.multicoredev.mclib.network;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import it.multicoredev.mclib.network.exceptions.PacketException;
+import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.mclib.network.protocol.PacketListener;
 import org.jetbrains.annotations.NotNull;
@@ -54,11 +55,11 @@ public abstract class NetworkHandler extends ChannelInboundHandlerAdapter {
     @Override
     public abstract void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception;
 
-    public void sendPacket(@NotNull Packet<?> packet) throws PacketException {
+    public void sendPacket(@NotNull Packet<?> packet) throws PacketSendException {
         try {
             ctx.writeAndFlush(packet);
         } catch (Exception e) {
-            throw new PacketException("Error while sending packet", e);
+            throw new PacketSendException("Error while sending packet", e);
         }
     }
 

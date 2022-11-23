@@ -39,11 +39,15 @@ import java.nio.charset.StandardCharsets;
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PacketByteBuf {
-    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+    private static Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private ByteBuf buf;
 
     public PacketByteBuf(@NotNull ByteBuf buf) {
         this.buf = buf;
+    }
+
+    public static void setGson(Gson gson) {
+        PacketByteBuf.gson = gson;
     }
 
     public ByteBuf buf() {
