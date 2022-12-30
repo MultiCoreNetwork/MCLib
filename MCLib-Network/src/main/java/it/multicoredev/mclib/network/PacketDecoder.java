@@ -9,6 +9,7 @@ import it.multicoredev.mclib.network.exceptions.PacketException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.mclib.network.protocol.PacketRegistry;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,6 +37,14 @@ public class PacketDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> objects) throws Exception {
         if (byteBuf.readableBytes() == 0) throw new DecoderException("Packet not readable");
+
+        if (byteBuf.readableBytes() < 4) return;
+
+        int len = byteBuf.readInt();
+        if (byteBuf.readableBytes() < len) {
+            byteBuf.resetReaderIndex();
+            return;
+        }
 
         PacketByteBuf buf = new PacketByteBuf(byteBuf);
         int id = buf.readInt();

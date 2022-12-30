@@ -1,11 +1,14 @@
 package it.multicoredev.mclib.network;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.mclib.network.protocol.PacketRegistry;
+
+import java.util.Arrays;
 
 /**
  * Copyright © 2020 by Lorenzo Magni
@@ -35,7 +38,12 @@ public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
         if (id == null) throw new EncoderException("Unregistered packet.");
 
         PacketByteBuf buf = new PacketByteBuf(byteBuf);
-        buf.writeInt(id);
-        packet.encode(buf);
+
+        PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
+        packetBuf.writeInt(id);
+        packet.encode(packetBuf);
+
+        buf.writeInt(packetBuf.readableBytes());
+        buf.writeBytes(packetBuf.buf());
     }
 }

@@ -66,8 +66,7 @@ public class ServerSocket {
         ChannelInitializer<SocketChannel> channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel channel) {
-                channel.pipeline()
-                        .addLast(new PacketDecoder(), new PacketEncoder(), createNetworkHandler());
+                channel.pipeline().addLast(new PacketDecoder(), new PacketEncoder(), createNetworkHandler());
             }
         };
 
