@@ -1,0 +1,13 @@
+int: 1
+float: 1.0
+boolean: true
+string: "test"
+list:
+  - "test"
+  - "test"
+  - "test"
+map:
+  test: "test"
+  test2: 2
+  test3: 3.4
+  test4: true
