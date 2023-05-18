@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 
 /**
@@ -80,9 +81,27 @@ public class GsonHelper {
      * @throws IOException if an I/O error occurs
      */
     public void save(Object object, File file) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8))) {
             writer.write(gson.toJson(object));
         }
+    }
+
+    /**
+     * Saves asynchronously the given object to the given file.
+     *
+     * @param object   the object to save
+     * @param file     the file to save to
+     * @param callback called after the save process
+     */
+    public void saveAsync(Object object, File file, SaveCallback callback) {
+        new Thread(() -> {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8))) {
+                writer.write(gson.toJson(object));
+                callback.call(true, null);
+            } catch (IOException e) {
+                callback.call(false, e);
+            }
+        }).start();
     }
 
     /**
@@ -93,7 +112,7 @@ public class GsonHelper {
      */
     public void saveAsync(Object object, File file) {
         new Thread(() -> {
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8))) {
                 writer.write(gson.toJson(object));
             } catch (IOException ignored) {
             }
@@ -111,7 +130,7 @@ public class GsonHelper {
      * @throws JsonSyntaxException if the file is not valid
      */
     public <T> T load(File file, Type type) throws IOException, JsonSyntaxException {
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+        try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8)) {
             return gson.fromJson(reader, type);
         }
     }

@@ -1,4 +1,6 @@
-package it.multicoredev.mclib.watchdog;
+package it.multicoredev.mclib.json;
+
+import java.io.IOException;
 
 /**
  * Copyright © 2019-2023 by Lorenzo Magni
@@ -20,9 +22,7 @@ package it.multicoredev.mclib.watchdog;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-public interface WatchdogListener {
-    /**
-     * Called when the watchdog dies.
-     */
-    void call();
+public abstract class SaveCallback {
+
+    public abstract void call(boolean success, IOException exception);
 }
