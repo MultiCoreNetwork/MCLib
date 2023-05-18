@@ -21,7 +21,6 @@
     </properties>
 
     <modules>
-        <module>MCLib-Console</module>
         <module>MCLib-Database</module>
         <module>MCLib-Configurations</module>
         <module>MCLib-Utilities</module>
